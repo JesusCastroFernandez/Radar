@@ -1,0 +1,63 @@
+import java.util.*;
+
+public class Radar {
+  
+  // Constantes de multas
+  static final int MULTA_15 = 100;
+  static final int MULTA_30 = 200;
+  static final int MULTA_40 = 300;
+  static final int MULTA_50 = 500;
+  
+  // Mapa para almacenar las nacionalidades de los vehículos
+  static final Map<String, String> NACIONALIDADES = new HashMap<>();
+  
+  // Inicializamos el mapa de nacionalidades
+  static {
+    NACIONALIDADES.put("ES", "Español");
+    NACIONALIDADES.put("FR", "Francés");
+    NACIONALIDADES.put("DE", "Alemán");
+  }
+  
+  public static void main(String[] args) {
+    // Cadena de texto con las lecturas del radar
+    String lecturas = "CU-3344-H & 166 # 3344BBF & 136 # RM 437-LU & 122 # A233456L & 166";
+    
+    // Lista para almacenar las lecturas procesadas
+    List<Lectura> lecturasProcesadas = new ArrayList<>();
+    
+    // Dividimos la cadena en las diferentes lecturas
+    String[] lecturasArray = lecturas.split("#");
+    
+    // Procesamos cada lectura
+    for (String lectura : lecturasArray) {
+      String[] lecturaArray = lectura.trim().split("&");
+      String matricula = lecturaArray[0].trim();
+      int velocidad = Integer.parseInt(lecturaArray[1].trim());
+      String nacionalidad = "Otro";
+      if (matricula.startsWith("ES")) {
+        nacionalidad = "Español";
+      } else if (matricula.startsWith("FR")) {
+        nacionalidad = "Francés";
+      } else if (matricula.startsWith("DE")) {
+        nacionalidad = "Alemán";
+      }
+      Lectura lecturaProcesada = new Lectura(matricula, velocidad, nacionalidad);
+      lecturasProcesadas.add(lecturaProcesada);
+    }
+    
+    // Simulamos las multas para diferentes límites de velocidad
+    int[] limitesVelocidad = {100, 120, 140};
+    for (int limiteVelocidad : limitesVelocidad) {
+      System.out.println("Límite de velocidad: " + limiteVelocidad);
+      for (Lectura lectura : lecturasProcesadas) {
+        int porcentajeExceso = (lectura.velocidad - limiteVelocidad) * 100 / limiteVelocidad;
+        if (porcentajeExceso > 50) {
+          System.out.println(lectura.nacionalidad + " - " + lectura.matricula + ": " + MULTA_50 + "€");
+        } else if (porcentajeExceso > 40) {
+          System.out.println(lectura.nacionalidad + " - " + lectura.matricula + ": " + MULTA_40 + "€");
+        } else if (porcentajeExceso > 30) {
+          System.out.println(lectura.nacionalidad + " - " + lectura.matricula + ": " + MULTA_30 + "€");
+        } else if (porcentajeExceso > 15) {
+          System.out.println(lectura.nacionalidad + " - " + lectura.matricula + ": " + MULTA_20 + "€");
+        }
+      }
